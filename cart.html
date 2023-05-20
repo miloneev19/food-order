@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Shopping Cart</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <h1>Shopping Cart</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Total</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- PHP code to retrieve cart items from the database and display them -->
+      <?php
+        // Include the database configuration file
+        require_once 'dbconfig.php';
+
+        // Create a connection
+        $conn = new mysqli($servername, $username, $password, $dbname);
+
+        // Check connection
+        if ($conn->connect_error) {
+          die("Connection failed: " . $conn->connect_error);
+        }
+
+        // Retrieve cart items from the database
+        $sql = "SELECT * FROM cart_items";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows > 0) {
+          while ($row = $result->fetch_assoc()) {
+            // Display each cart item
+            echo '<tr>';
+            echo '<td>' . $row['item_name'] . '</td>';
+            echo '<td>$' . $row['item_price'] . '</td>';
+            echo '<td>' . $row['quantity'] . '</td>';
+            echo '<td>$' . ($row['item_price'] * $row['quantity']) . '</td>';
+            echo '<td><a href="update_cart.php?id=' . $row['id'] . '">Update</a> | <a href="delete_cart.php?id=' . $row['id'] . '">Delete</a></td>';
+            echo '</tr>';
+          }
+        } else {
+          echo '<tr><td colspan="5">No items in the cart</td></tr>';
+        }
+
+        // Close the database connection
+        $conn->close();
+      ?>
+    </tbody>
+  </table>
+
+  <a href="index.html">Continue Shopping</a>
+
+  <script src="script.js"></script>
+</body>
+</html>
